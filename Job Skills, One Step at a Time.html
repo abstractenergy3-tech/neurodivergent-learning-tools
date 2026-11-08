@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Job Skills, One Step at a Time</title>
+<style>
+:root{--bg:#f3f7f9;--card:#fff;--ink:#14212b;--mute:#44566a;--brand:#0b6e6e;--bi:#fff;--soft:#e4eef1;--line:#b7c8cf;--ok:#17653a;--okbg:#ddf2e5;--fs:1.25rem;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a22;--card:#17252f;--ink:#eef4f7;--mute:#b4c3cc;--brand:#5fd0c9;--bi:#06201f;--soft:#21323d;--line:#3d5361;--ok:#8be0a8;--okbg:#173a27}}
+:root[data-theme="dark"]{--bg:#0f1a22;--card:#17252f;--ink:#eef4f7;--mute:#b4c3cc;--brand:#5fd0c9;--bi:#06201f;--soft:#21323d;--line:#3d5361;--ok:#8be0a8;--okbg:#173a27}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:Verdana,Tahoma,"Segoe UI",Arial,sans-serif;font-size:var(--fs);line-height:1.7;letter-spacing:.02em}
+main{max-width:40rem;margin:0 auto;padding:1rem}
+h1{font-size:1.5em;line-height:1.3;margin:.2em 0 .6em}
+p{margin:0 0 1em;max-width:34em}
+ul{padding-left:1.4em;margin:0 0 1em}
+li{margin-bottom:.5em}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:4px solid var(--ink);outline-offset:3px}
+.tools{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem}
+.mini{min-height:2.75rem;padding:.25rem .9rem;border:2px solid var(--line);border-radius:.6rem;background:var(--card);color:var(--ink);font-size:.8em}
+.btn{min-height:3.5rem;padding:.5rem 1.4rem;border:3px solid var(--brand);border-radius:.8rem;background:var(--brand);color:var(--bi);font-weight:bold}
+.btn.alt{background:transparent;color:var(--brand)}
+.row{display:flex;flex-wrap:wrap;gap:.75rem;margin:1rem 0}
+.row .btn{flex:1 1 9rem}
+.card{display:block;width:100%;box-sizing:border-box;text-align:left;background:var(--card);color:var(--ink);border:3px solid var(--line);border-radius:1rem;padding:1rem 1.25rem;margin:0 0 1rem}
+button.card:hover,button.card:focus-visible{border-color:var(--brand)}
+button.card span{display:block;color:var(--mute);font-size:.85em}
+.steps{display:flex;gap:.35rem;margin:.75rem 0 1rem;padding:0}
+.steps i{flex:1;height:.9rem;border-radius:.3rem;background:var(--soft);border:2px solid var(--line)}
+.steps i.on{background:var(--brand);border-color:var(--brand)}
+.stepno{margin:.75rem 0 0;color:var(--mute);font-size:.9em}
+.opt{display:block;width:100%;text-align:left;margin:.5rem 0;padding:.75rem 1rem;min-height:3.25rem;border:3px solid var(--line);border-radius:.7rem;background:var(--soft);color:var(--ink)}
+.opt.ok{border-color:var(--ok);background:var(--okbg)}
+#fb{min-height:1.7em;font-weight:bold;margin:.5rem 0 0}
+.quiz{border-top:3px dashed var(--line);margin-top:1.25rem;padding-top:1rem}
+</style>
+</head>
+<body>
+<main>
+<div class="tools" role="group" aria-label="Display settings">
+<button class="mini" data-act="sm">Smaller text</button>
+<button class="mini" data-act="lg">Larger text</button>
+<button class="mini" data-act="theme">Dark or light</button>
+</div>
+<div id="app" aria-live="polite"></div>
+</main>
+<script>
+var L=[
+{title:"Getting ready for a job interview",steps:[
+{t:"What is an interview?",p:["An interview is a talk with someone from a company.","They want to learn about you. You can learn about the job too.","It is normal to feel nervous. Many people do."]},
+{t:"Plan the day before",p:["Do these things the day before:"],list:["Pick clean clothes that feel good to wear.","Find out how you will get there.","Plan to arrive 10 minutes early."],q:{q:"When is a good time to arrive?",o:["10 minutes early","1 hour late","Right when it ends"],a:0,ok:"Yes! Arriving a little early helps you feel calm.",no:"Not quite. Try another one. Think about feeling calm and ready."}},
+{t:"What to bring",p:["Put these in a bag the night before:"],list:["A pen and paper","A photo ID","A paper copy of your resume, if you have one","2 or 3 questions to ask them"]},
+{t:"During the interview",p:["Say hello and say your name.","Listen to each question. Take your time to answer.","If you did not understand, it is okay to ask again."],q:{q:"You did not hear the question. What can you say?",o:["“Can you say that again, please?”","Nothing. Just guess.","Leave the room."],a:0,ok:"Yes! Asking again is polite and smart.",no:"Not quite. Try another one."}},
+{t:"After the interview",p:["Say thank you before you leave.","Later that day, send a short thank-you message.","Example: “Thank you for meeting me. I enjoyed learning about the job.”"]}
+]},
+{title:"Your first day at work",steps:[
+{t:"Before you leave home",p:["Get ready the night before and the morning of:"],list:["Eat something.","Bring water or lunch.","Know your start time.","Know who to ask for when you get there."]},
+{t:"When you arrive",p:["Go to the front desk, or find the person you were told to meet.","You can say: “Hi, I’m [your name]. It’s my first day.”"],q:{q:"Who do you ask for when you arrive?",o:["The person I was told to meet","Nobody. I walk around alone.","I wait outside all day."],a:0,ok:"Yes! Going to your contact person is the best plan.",no:"Not quite. Try another one."}},
+{t:"Learning new tasks",p:["You will learn a lot. Nobody expects you to know everything on day one.","Here is what helps:"],list:["Watch first.","Write the steps in a small notebook.","Ask a question when you feel unsure."]},
+{t:"Breaks and going home",p:["Ask when your breaks are.","Before you go home, you can ask: “Is there anything else you need from me today?”","Then say goodbye. You did it!"]}
+]},
+{title:"Asking for help at work",steps:[
+{t:"It is okay to ask",p:["Everyone needs help at work, even people who have worked there for years.","Asking for help shows you care about doing a good job."]},
+{t:"When to ask",p:["Ask for help when:"],list:["You tried for a few minutes and still feel stuck.","You are not sure what to do next.","Something feels unsafe."],q:{q:"Something feels unsafe. What should you do?",o:["Ask for help right away","Keep going quietly","Hide it"],a:0,ok:"Yes! Safety comes first. Always ask right away.",no:"Not quite. Try another one."}},
+{t:"How to ask",p:["Walk to the person. Wait until they are not busy.","Say: “Can you help me with this, please?”","Then say what you are stuck on."]},
+{t:"After you get help",p:["Say thank you.","Write the answer down.","Next time, you will remember it."]}
+]}
+];
+var app=document.getElementById("app"),root=document.documentElement,ci=0,cn=0;
+var st={done:{},at:{},fs:1.25,theme:""};
+var speech="speechSynthesis" in window;
+try{Object.assign(st,JSON.parse(localStorage.getItem("jobsteps")||"{}"))}catch(e){}
+function save(){try{localStorage.setItem("jobsteps",JSON.stringify(st))}catch(e){}}
+function apply(){root.style.setProperty("--fs",st.fs+"rem");if(st.theme){root.setAttribute("data-theme",st.theme)}else{root.removeAttribute("data-theme")}}
+function stop(){if(speech)speechSynthesis.cancel()}
+function focusH(){var h=document.getElementById("h");if(h)h.focus();window.scrollTo(0,0)}
+function home(){
+stop();
+app.innerHTML="<h1 id=\"h\" tabindex=\"-1\">Pick a lesson</h1><p>Each lesson has small steps. Go at your own speed. There are no timers and no tests.</p>"+
+L.map(function(l,i){var n=st.done[i]?"Finished. Do it again":st.at[i]!==undefined?"Keep going":"Start";return "<button class=\"card\" data-i=\""+i+"\"><strong>"+l.title+"</strong><span>"+l.steps.length+" steps. "+n+"</span></button>"}).join("")+
+"<p>Your place is saved on this device.</p>";
+focusH();
+}
+function lesson(i,n){
+stop();ci=i;cn=n;
+var l=L[i],s=l.steps[n],tot=l.steps.length;
+st.at[i]=n;save();
+var bars="";for(var k=0;k<tot;k++)bars+="<i"+(k<=n?" class=\"on\"":"")+"></i>";
+var q=s.q?"<div class=\"quiz\"><p><strong>Try it: "+s.q.q+"</strong></p>"+s.q.o.map(function(o,k){return "<button class=\"opt\" data-q=\""+k+"\">"+o+"</button>"}).join("")+"<p id=\"fb\" role=\"status\"></p></div>":"";
+app.innerHTML="<button class=\"btn alt\" data-act=\"home\">All lessons</button>"+
+"<p class=\"stepno\">Step "+(n+1)+" of "+tot+"</p>"+
+"<div class=\"steps\" role=\"progressbar\" aria-label=\"Lesson progress\" aria-valuemin=\"1\" aria-valuemax=\""+tot+"\" aria-valuenow=\""+(n+1)+"\">"+bars+"</div>"+
+"<section class=\"card\"><h1 id=\"h\" tabindex=\"-1\">"+s.t+"</h1>"+s.p.map(function(x){return "<p>"+x+"</p>"}).join("")+(s.list?"<ul>"+s.list.map(function(x){return "<li>"+x+"</li>"}).join("")+"</ul>":"")+q+"</section>"+
+(speech?"<button class=\"btn alt\" data-act=\"read\">Read this step aloud</button>":"")+
+"<div class=\"row\">"+(n?"<button class=\"btn alt\" data-act=\"back\">Back</button>":"")+"<button class=\"btn\" data-act=\"next\">"+(n<tot-1?"Next step":"Finish")+"</button></div>";
+focusH();
+}
+function finish(i){
+stop();st.done[i]=1;delete st.at[i];save();
+app.innerHTML="<h1 id=\"h\" tabindex=\"-1\">Well done!</h1><section class=\"card\"><p>You finished: <strong>"+L[i].title+"</strong>.</p><p>You can be proud of the work you did.</p></section><div class=\"row\"><button class=\"btn\" data-act=\"home\">Pick another lesson</button><button class=\"btn alt\" data-again=\""+i+"\">Do this lesson again</button></div>";
+focusH();
+}
+app.addEventListener("click",function(e){
+var b=e.target.closest("button");if(!b)return;
+var a=b.getAttribute("data-act"),d=b.getAttribute("data-i"),q=b.getAttribute("data-q"),ag=b.getAttribute("data-again");
+if(d!==null){var i=+d;lesson(i,st.done[i]?0:(st.at[i]||0));return}
+if(ag!==null){lesson(+ag,0);return}
+if(q!==null){
+var sq=L[ci].steps[cn].q,ok=+q===sq.a,fb=document.getElementById("fb");
+if(ok)b.classList.add("ok");
+fb.textContent=ok?sq.ok:sq.no;return}
+if(a==="home")home();
+else if(a==="next"){if(cn<L[ci].steps.length-1)lesson(ci,cn+1);else finish(ci)}
+else if(a==="back")lesson(ci,cn-1);
+else if(a==="read"){
+stop();
+var t=[].map.call(document.querySelectorAll("section h1,section p,section li"),function(x){return x.textContent}).join(". ");
+var u=new SpeechSynthesisUtterance(t);u.rate=.9;speechSynthesis.speak(u)}
+});
+document.querySelector(".tools").addEventListener("click",function(e){
+var b=e.target.closest("button");if(!b)return;
+var a=b.getAttribute("data-act");
+if(a==="sm")st.fs=Math.max(1,st.fs-.125);
+if(a==="lg")st.fs=Math.min(2,st.fs+.125);
+if(a==="theme"){var cur=st.theme||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");st.theme=cur==="dark"?"light":"dark"}
+apply();save();
+});
+apply();home();
+</script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Worry checker</title>
+<style>
+:root{--bg:#f3f7f9;--card:#fff;--ink:#14212b;--mute:#44566a;--brand:#0b6e6e;--bi:#fff;--soft:#e4eef1;--line:#b7c8cf;--ok:#17653a;--okbg:#ddf2e5;--fs:1.25rem;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a22;--card:#17252f;--ink:#eef4f7;--mute:#b4c3cc;--brand:#5fd0c9;--bi:#06201f;--soft:#21323d;--line:#3d5361;--ok:#8be0a8;--okbg:#173a27}}
+:root[data-theme="dark"]{--bg:#0f1a22;--card:#17252f;--ink:#eef4f7;--mute:#b4c3cc;--brand:#5fd0c9;--bi:#06201f;--soft:#21323d;--line:#3d5361;--ok:#8be0a8;--okbg:#173a27}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:Verdana,Tahoma,"Segoe UI",Arial,sans-serif;font-size:var(--fs);line-height:1.7;letter-spacing:.02em}
+:root.roomy body{line-height:2.1;letter-spacing:.06em;word-spacing:.15em}
+main{max-width:40rem;margin:0 auto;padding:1rem}
+h1{font-size:1.5em;line-height:1.3;margin:.2em 0 .6em}
+h2{font-size:1.15em;margin:1.5em 0 .5em}
+p{margin:0 0 1em;max-width:34em}
+ul,ol{padding-left:1.4em;margin:0 0 1em}
+li{margin-bottom:.5em}
+button,textarea,input{font:inherit}
+button{cursor:pointer}
+:focus-visible{outline:4px solid var(--ink);outline-offset:3px}
+.tools{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem}
+.mini{min-height:2.75rem;padding:.25rem .9rem;border:2px solid var(--line);border-radius:.6rem;background:var(--card);color:var(--ink);font-size:.8em}
+.btn{min-height:3.5rem;padding:.5rem 1.4rem;border:3px solid var(--brand);border-radius:.8rem;background:var(--brand);color:var(--bi);font-weight:bold}
+.btn.alt{background:transparent;color:var(--brand)}
+.row{display:flex;flex-wrap:wrap;gap:.75rem;margin:1rem 0}
+.row .btn{flex:1 1 9rem}
+.card{display:block;width:100%;box-sizing:border-box;text-align:left;background:var(--card);color:var(--ink);border:3px solid var(--line);border-radius:1rem;padding:1rem 1.25rem;margin:0 0 1rem}
+button.card:hover,button.card:focus-visible{border-color:var(--brand)}
+button.card span{display:block;color:var(--mute);font-size:.85em}
+.steps{display:flex;gap:.35rem;margin:.75rem 0 1rem}
+.steps i{flex:1;height:.9rem;border-radius:.3rem;background:var(--soft);border:2px solid var(--line)}
+.steps i.on{background:var(--brand);border-color:var(--brand)}
+.stepno{margin:.75rem 0 0;color:var(--mute);font-size:.9em}
+.note{border-left:.5rem solid var(--brand);background:var(--soft);border-radius:.5rem;padding:.6rem 1rem;margin:1rem 0}
+.note p{margin:.4em 0}
+.opt{display:block;width:100%;text-align:left;margin:.5rem 0;padding:.75rem 1rem;min-height:3.25rem;border:3px solid var(--line);border-radius:.7rem;background:var(--soft);color:var(--ink)}
+.opt.ok{border-color:var(--ok);background:var(--okbg)}
+details{background:var(--card);border:3px solid var(--line);border-radius:.8rem;padding:.5rem 1rem;margin-bottom:.75rem}
+summary{cursor:pointer;font-weight:bold;min-height:2.75rem;display:flex;align-items:center}
+textarea,input[type=text]{width:100%;box-sizing:border-box;padding:.7rem;border:3px solid var(--line);border-radius:.7rem;background:var(--card);color:var(--ink)}
+textarea{min-height:7rem}
+label{display:block;margin:.4rem 0;font-weight:bold}
+.chk{display:flex;gap:.75rem;align-items:center;min-height:3rem;font-weight:normal}
+.chk input{width:1.6rem;height:1.6rem;flex:none}
+.big h1{font-size:2em}
+.show{min-height:55vh;display:flex;align-items:center;justify-content:center;text-align:center}
+.show h1{font-size:2.1em}
+.chip{display:inline-block;border:2px solid var(--line);border-radius:2rem;padding:.1rem .8rem;margin:.2rem;background:var(--soft);font-size:.85em}
+.sm{min-height:2.75rem;padding:.2rem .8rem;font-size:.85em}
+</style>
+</head>
+<body>
+<main>
+<div class="tools" role="group" aria-label="Display settings">
+<button class="mini" data-s="sm">Smaller text</button>
+<button class="mini" data-s="lg">Larger text</button>
+<button class="mini" data-s="theme">Dark or light</button>
+<button class="mini" data-s="space">More space</button>
+<button class="mini" data-s="brk">Need a break</button>
+</div>
+<div id="app"></div>
+<p class="stepno">Everyone is different. Please treat this tool as a starting point and ask people what works for them.</p>
+</main>
+<script>
+var KEY="rel-wc",app=document.getElementById("app"),root=document.documentElement,A={},I=null,cur=null,T=null;
+var st={fs:1.25,theme:"",roomy:0,d:{}};
+try{Object.assign(st,JSON.parse(localStorage.getItem(KEY)||"{}"))}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+function apply(){root.style.setProperty("--fs",st.fs+"rem");root.classList.toggle("roomy",!!st.roomy);if(st.theme){root.setAttribute("data-theme",st.theme)}else{root.removeAttribute("data-theme")}}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return "&#"+c.charCodeAt(0)+";"})}
+function P(a){return a.map(function(x){return "<p>"+x+"</p>"}).join("")}
+function bars(n,t){var b="";for(var k=0;k<t;k++)b+="<i"+(k<=n?" class='on'":"")+"></i>";return "<div class='steps' role='progressbar' aria-label='Progress' aria-valuemin='1' aria-valuemax='"+t+"' aria-valuenow='"+(n+1)+"'>"+b+"</div>"}
+function go(fn){if(T){clearInterval(T);T=null}cur=fn;fn();var h=document.getElementById("h");if(h)h.focus();window.scrollTo(0,0)}
+app.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;var a=b.dataset.act;if(a==="ready"){go(cur);return}if(a&&A[a])A[a](b)});
+app.addEventListener("input",function(e){if(I)I(e)});
+document.querySelector(".tools").addEventListener("click",function(e){
+var b=e.target.closest("button");if(!b)return;var a=b.dataset.s;
+if(a==="brk"){if(T){clearInterval(T);T=null}app.innerHTML="<h1 id='h' tabindex='-1'>Taking a break</h1><section class='card'><p>This screen is quiet. Nothing moves. Your place is saved.</p><p>Come back when you are ready. There is no hurry.</p></section><div class='row'><button class='btn' data-act='ready'>I’m ready</button></div>";document.getElementById("h").focus();return}
+if(a==="sm")st.fs=Math.max(1,st.fs-.125);
+if(a==="lg")st.fs=Math.min(2,st.fs+.125);
+if(a==="space")st.roomy=st.roomy?0:1;
+if(a==="theme"){var c=st.theme||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");st.theme=c==="dark"?"light":"dark"}
+apply();save()});
+apply();
+var W=[
+["They have not replied to my message",["They may be busy, tired, or away from their phone.","They may have read it and forgotten to answer.","They may need time to think about a good reply."],"“Hi! No pressure. I just wanted to check you got my message.”"],
+["They seemed annoyed with me",["They may be tired, hungry, or stressed about something else.","Their face or tone may not match how they feel.","It may have nothing to do with you."],"“Are we okay? You seemed different earlier, and I want to check.”"],
+["I was left out of a plan",["Plans may have been made quickly, without thinking of everyone.","They may not know you wanted to come.","It may not be personal."],"“I would love to join things like that. Can you let me know next time?”"],
+["I think I said something wrong",["They may not have noticed.","They may have understood you fine.","If it was a problem, they can tell you."],"“I was thinking about what I said earlier. Did it come across the way I meant?”"],
+["They cancelled our plans",["They may be overloaded or unwell.","It may be hard to say why.","It does not mean they do not like you."],"“Thanks for telling me. Do you want to pick another day?”"],
+["They did not say hi when we met",["They may not have seen you.","They may have been focused on something else.","They may have felt too tired to talk."],"“I saw you earlier and wanted to say hi!”"]
+];
+var CALM=["Drink some water. Move your body for a minute.","Name the feeling: “I feel hurt” or “I feel worried.”","Wait 20 minutes before you send more messages.","Do something that absorbs you for a while.","Write the worry down. Look at it again later."];
+var wi=0;
+function home(){app.innerHTML="<h1 id='h' tabindex='-1'>Worry checker</h1><p>Many people with ADHD say rejection or criticism can hurt very strongly. Autistic people may also worry about missing signals. Your feelings are real. This tool helps you slow down and look at other possibilities before you act.</p><h2>What are you worried about?</h2>"+W.map(function(w,i){return "<button class='card' data-act='open' data-i='"+i+"'><strong>"+w[0]+"</strong></button>"}).join("")}
+function view(){var w=W[wi];app.innerHTML="<button class='btn alt' data-act='home'>Other worries</button><h1 id='h' tabindex='-1'>"+w[0]+"</h1><section class='card'><p><strong>Other things that could be true:</strong></p><ul>"+w[1].map(function(x){return "<li>"+x+"</li>"}).join("")+"</ul></section><section class='card'><p><strong>A question you could ask:</strong></p><p>"+w[2]+"</p></section><h2>How strong does the feeling feel?</h2><div class='row'>"+[1,2,3,4,5].map(function(n){return "<button class='btn alt sm' data-act='lv' data-n='"+n+"'>"+n+"</button>"}).join("")+"</div><div id='lv' role='status'></div>"}
+A.home=function(){go(home)};
+A.open=function(b){wi=+b.dataset.i;go(view)};
+A.lv=function(b){var n=+b.dataset.n,h="<section class='card'><p>"+(n>=4?"This feeling is strong, and it is real even if the worry turns out to be wrong. Try a calm step first, and decide about sending anything later.":"This feeling is manageable. You can try a calm step, or ask your question.")+"</p><ul>"+CALM.map(function(c){return "<li>"+c+"</li>"}).join("")+"</ul></section>";if(n>=4)h+="<p>If strong worries happen all the time, a therapist who understands autism and ADHD can help.</p>";document.getElementById("lv").innerHTML=h};
+go(home);
+
+</script>
+</body>
+</html>
